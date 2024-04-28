@@ -164,7 +164,8 @@ vim.diagnostic.config({
 vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
-vim.keymap.set('n', '<space>q', '<Plug>(qf_qf_toggle)')
+-- vim.keymap.set('n', '<space>q', '<Plug>(qf_qf_toggle)')
+-- vim.keymap.set('n', '<space>q', vim.diagnostic.setqflist)
 
 -- Use LspAttach autocommand to only map the following keys
 -- after the language server attaches to the current buffer
@@ -194,11 +195,29 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
---[[ vim.api.nvim_create_autocmd('DiagnosticChanged', {
-    callback = function()
-        vim.diagnostic.setqflist({ open = false })
-    end
-}) ]]
+vim.api.nvim_create_autocmd('DiagnosticChanged', {
+    callback = function(--[[ args ]])
+        local qf_info = vim.fn.getqflist({ title = 0, id = 0 })
+        local qf_items = vim.diagnostic.toqflist(vim.diagnostic.get())
+
+        vim.schedule(function()
+            -- Replace the latest qflist if it was created by this autocmd so other
+            -- qflists aren't buried due to frequently changing diagnostics.
+            vim.fn.setqflist({}, qf_info.title == "All Diagnostics" and "r" or " ", {
+                title = "All Diagnostics",
+                items = qf_items,
+            })
+
+            -- Don't steal focus from other qflists. For example, when working through
+            -- vimgrep results, you likely want :cnext to take you to the next match,
+            -- rather than the next diagnostic. Use :cnew to switch to the diagnostic
+            -- qflist when you want it.
+            if qf_info.id ~= 0 and qf_info.title ~= "All Diagnostics" then
+                vim.cmd.cold()
+            end
+        end)
+    end,
+})
 
 require('neo-tree').setup {
     close_if_last_window = true,
@@ -283,7 +302,7 @@ vim.cmd.colorscheme('monokai-pro')
 require('lualine').setup {
     options = {
         icons_enabled = true,
-        theme = 'monokai-pro',
+        -- theme = 'monokai-pro',
         globalstatus = true,
         section_separators = {
             left = '',
@@ -304,18 +323,24 @@ require('lualine').setup {
     },
     winbar = {
         lualine_a = { { 'filename', separator = { left = '', right = '' }, right_padding = 2 } },
-        lualine_b = { },
-        lualine_c = { },
-        lualine_x = { },
-        lualine_y = { },
-        lualine_z = { },
     },
     inactive_winbar = {
         lualine_a = { { 'filename', separator = { left = '', right = '' }, right_padding = 2 } },
-        lualine_b = { },
-        lualine_c = { },
-        lualine_x = { },
-        lualine_y = { },
-        lualine_z = { },
+    },
+    extensions = {
+        {
+            filetypes = { 'qf' },
+            winbar = { -- seems like inactive_winbar not needed
+                lualine_a = {
+                    { '', draw_empty = true, separator = { left = '' } }, -- do this so we can get the separator to the left but still get component separator after title
+                    '%t', -- this gives [Quickfix List] or [Location List] where lualine 'filename' would just give [No Name]
+                    function() return vim.w['quickfix_title'] or '' end
+                },
+                lualine_x = { 'location', 'progress' },
+            },
+        }
     },
 }
+
+-- vim.g.qf_auto_resize = 0
+-- vim.g.qf_loclist_window_bottom = 0
