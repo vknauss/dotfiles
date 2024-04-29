@@ -34,6 +34,7 @@ Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'loctvl842/monokai-pro.nvim'
 Plug 'tpope/vim-fugitive'
+Plug 'folke/trouble.nvim'
 
 " neo-tree deps
 Plug 'nvim-lua/plenary.nvim'
@@ -140,8 +141,9 @@ local lspconfig = require 'lspconfig'
 lspconfig.clangd.setup {
     capabilities = capabilities,
     cmd = {
-        "clangd",
-        "--header-insertion=never"
+        'clangd',
+        '--header-insertion=never',
+        '--background-index',
     }
 }
 lspconfig.lua_ls.setup {
@@ -160,6 +162,7 @@ lspconfig.pylsp.setup {
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
 vim.diagnostic.config({
     update_in_insert = true,
+    severity_sort = true,
 })
 vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
@@ -195,10 +198,18 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
-vim.api.nvim_create_autocmd('DiagnosticChanged', {
-    callback = function(--[[ args ]])
+local trouble = require 'trouble'
+vim.keymap.set('n', '<space>t', function() trouble.toggle() end)
+
+--[[ vim.api.nvim_create_autocmd('DiagnosticChanged', {
+    callback = function()
         local qf_info = vim.fn.getqflist({ title = 0, id = 0 })
-        local qf_items = vim.diagnostic.toqflist(vim.diagnostic.get())
+        local diagnostics = vim.diagnostic.get()
+        table.sort(diagnostics, function(e0, e1)
+            return e0.severity > e1.severity or (e0.severity == e1.severity and (e0.bufnr < e1.bufnr or (e0.bufnr == e1.bufnr and (e0.lnum < e1.lnum or (e0.lnum == e1.lnum and (e0.col < e1.col))))))
+        end)
+
+        local qf_items = vim.diagnostic.toqflist(diagnostics)
 
         vim.schedule(function()
             -- Replace the latest qflist if it was created by this autocmd so other
@@ -217,7 +228,7 @@ vim.api.nvim_create_autocmd('DiagnosticChanged', {
             end
         end)
     end,
-})
+}) ]]
 
 require('neo-tree').setup {
     close_if_last_window = true,
