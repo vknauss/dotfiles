@@ -156,6 +156,9 @@ lspconfig.tsserver.setup {
 lspconfig.pylsp.setup {
     capabilities = capabilities,
 }
+lspconfig.jsonls.setup {
+    capabilities = capabilities,
+}
 
 -- https://github.com/neovim/nvim-lspconfig
 -- Global mappings.
