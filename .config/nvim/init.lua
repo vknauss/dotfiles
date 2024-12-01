@@ -9,10 +9,12 @@ vim.opt.mouse = 'a'
 vim.opt.termguicolors = true
 vim.opt.background = 'dark'
 vim.opt.cursorline = true
+-- vim.opt.laststatus = 3
+vim.g.neo_tree_remove_legacy_commands = 1
 
 vim.fn['plug#begin'](vim.fn.stdpath('data') .. '/plugged')
 vim.cmd [[
-Plug 'tpope/vim-sensible'
+" Plug 'tpope/vim-sensible'
 Plug 'terminalnode/sway-vim-syntax'
 Plug 'neoclide/jsonc.vim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
@@ -35,6 +37,7 @@ Plug 'nvim-lualine/lualine.nvim'
 Plug 'loctvl842/monokai-pro.nvim'
 Plug 'tpope/vim-fugitive'
 Plug 'folke/trouble.nvim'
+Plug 'p00f/clangd_extensions.nvim'
 
 " neo-tree deps
 Plug 'nvim-lua/plenary.nvim'
@@ -71,67 +74,86 @@ cmp.setup {
         end
     },
     mapping = cmp.mapping.preset.insert({
-        ['<C-u>'] = cmp.mapping.scroll_docs(-4), -- Up
-        ['<C-d>'] = cmp.mapping.scroll_docs(4), -- Down
-        -- C-b (back) C-f (forward) for snippet placeholder navigation.
-        ['<C-Space>'] = cmp.mapping.complete(),
-        ["<CR>"] = cmp.mapping({i = function(fallback)
-            if cmp.visible() and cmp.get_active_entry() then
-                cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
-            else
-                fallback()
-            end
-        end,
-            s = cmp.mapping.confirm({ select = true }),
-        }),
-        ['<Tab>'] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                if #cmp.get_entries() == 1 then
-                    cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
+            ['<C-u>'] = cmp.mapping.scroll_docs(-4), -- Up
+            ['<C-d>'] = cmp.mapping.scroll_docs(4), -- Down
+            -- C-b (back) C-f (forward) for snippet placeholder navigation.
+            ['<C-Space>'] = cmp.mapping.complete(),
+            ['<CR>'] = cmp.mapping(function(fallback)
+                if cmp.visible() and cmp.get_active_entry() then
+                    -- cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
+                    cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = false })
                 else
-                    cmp.select_next_item()
+                    fallback()
                 end
-            elseif vim.fn["vsnip#available"](1) == 1 then
-                feedkey("<Plug>(vsnip-expand-or-jump)")
-            elseif has_words_before() then cmp.complete() if #cmp.get_entries() == 1 then cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }) end else fallback()
-            end
-        end, { 'i', 's' }),
-        ['<S-Tab>'] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_prev_item()
-            elseif  vim.fn["vsnip#jumpable"](-1) == 1 then
-                feedkey("<Plug>(vsnip-jump-prev)", "")
-            else
-                fallback()
-            end
-        end, { 'i', 's' }),
-    }),
+            end, { 'i', 's' }),
+            ['<Tab>'] = cmp.mapping(function(fallback)
+                if cmp.visible() then
+                    --[[ if #cmp.get_entries() == 1 then
+                        cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
+                    else ]]
+                        cmp.select_next_item()
+                    -- end
+                elseif vim.fn["vsnip#jumpable"](1) == 1 then
+                    feedkey("<Plug>(vsnip-jump-next)")
+                --[[ elseif vim.fn["vsnip#available"](1) == 1 then
+                    feedkey("<Plug>(vsnip-expand-or-jump)") ]]
+                elseif has_words_before() then
+                    cmp.complete()
+                    if #cmp.get_entries() == 1 then
+                        cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
+                    end
+                else
+                    fallback()
+                end
+            end, { 'i', 's' }),
+            ['<S-Tab>'] = cmp.mapping(function(fallback)
+                if cmp.visible() then
+                    cmp.select_prev_item()
+                elseif  vim.fn["vsnip#jumpable"](-1) == 1 then
+                    feedkey("<Plug>(vsnip-jump-prev)", "")
+                else
+                    fallback()
+                end
+            end, { 'i', 's' }),
+        }),
     sources = cmp.config.sources({
-        { name = 'nvim_lsp' },
-        { name = 'vsnip' },
-        { name = 'nvim_lsp_signature_help' }
-    }, {
-        { name = 'buffer' }
-    })
+            { name = 'nvim_lsp' },
+            { name = 'vsnip' },
+            { name = 'nvim_lsp_signature_help' }
+        }, {
+            { name = 'buffer' }
+        }),
+    sorting = {
+        comparators = {
+            cmp.config.compare.offset,
+            cmp.config.compare.exact,
+            cmp.config.compare.recently_used,
+            require("clangd_extensions.cmp_scores"),
+            cmp.config.compare.kind,
+            cmp.config.compare.sort_text,
+            cmp.config.compare.length,
+            cmp.config.compare.order,
+        },
+    },
 }
 
 -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline({ '/', '?' }, {
-mapping = cmp.mapping.preset.cmdline(),
-sources = {
-  { name = 'buffer' }
-}
-})
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = {
+            { name = 'buffer' }
+        }
+    })
 
 -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline(':', {
-mapping = cmp.mapping.preset.cmdline(),
-sources = cmp.config.sources({
-  { name = 'path' }
-}, {
-  { name = 'cmdline' }
-})
-})
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = cmp.config.sources({
+            { name = 'path' }
+        }, {
+            { name = 'cmdline' }
+        })
+    })
 
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
@@ -144,13 +166,14 @@ lspconfig.clangd.setup {
         'clangd',
         '--header-insertion=never',
         '--background-index',
+        '--log=error',
     }
 }
 lspconfig.lua_ls.setup {
     capabilities = capabilities,
     severity_sort = true,
 }
-lspconfig.tsserver.setup {
+lspconfig.ts_ls.setup {
     capabilities = capabilities,
 }
 lspconfig.pylsp.setup {
@@ -163,10 +186,10 @@ lspconfig.jsonls.setup {
 -- https://github.com/neovim/nvim-lspconfig
 -- Global mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
-vim.diagnostic.config({
+vim.diagnostic.config {
     update_in_insert = true,
     severity_sort = true,
-})
+}
 vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
@@ -176,33 +199,52 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
 -- Use LspAttach autocommand to only map the following keys
 -- after the language server attaches to the current buffer
 vim.api.nvim_create_autocmd('LspAttach', {
-  group = vim.api.nvim_create_augroup('UserLspConfig', {}),
-  callback = function(ev)
-    -- Enable completion triggered by <c-x><c-o>
-    vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
+        group = vim.api.nvim_create_augroup('UserLspConfig', {}),
+        callback = function(ev)
+            -- Enable completion triggered by <c-x><c-o>
+            vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
 
-    -- Buffer local mappings.
-    -- See `:help vim.lsp.*` for documentation on any of the below functions
-    local opts = { buffer = ev.buf }
-    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-    vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
-    vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
-    vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
-    vim.keymap.set('n', '<space>wl', function()
-      print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-    end, opts)
-    vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
-    vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
-    vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
-    vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-  end,
-})
+            -- Buffer local mappings.
+            -- See `:help vim.lsp.*` for documentation on any of the below functions
+            local opts = { buffer = ev.buf }
+            vim.keymap.set('n', 'gD', function() vim.lsp.buf.declaration { reuse_win = true } end, opts)
+            vim.keymap.set('n', 'gd', function() vim.lsp.buf.definition { reuse_win = true } end, opts)
+            vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+            vim.keymap.set('n', 'gi', function() vim.lsp.buf.implementation { reuse_win = true } end, opts)
+            vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+            vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
+            vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
+            vim.keymap.set('n', '<space>wl', function()
+                print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+            end, opts)
+            vim.keymap.set('n', '<space>D', function() vim.lsp.buf.type_definition { reuse_win = true } end, opts)
+            vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
+            vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
+            vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+        end,
+    })
 
 local trouble = require 'trouble'
-vim.keymap.set('n', '<space>t', function() trouble.toggle() end)
+trouble.setup {
+    open_no_results = true,
+    focus = true,
+    auto_preview = false,
+    preview = {
+        type  = 'float',
+        relative = 'editor',
+    },
+    win = {
+        type  = 'split',
+        relative = 'win',
+    },
+}
+vim.keymap.set('n', '<space>t', function() trouble.toggle('diagnostics') end)
+
+vim.api.nvim_create_autocmd("QuickFixCmdPost", {
+  callback = function()
+    vim.cmd([[Trouble qflist open]])
+  end,
+})
 
 --[[ vim.api.nvim_create_autocmd('DiagnosticChanged', {
     callback = function()
@@ -281,6 +323,7 @@ require('neo-tree').setup {
         use_libuv_file_watcher = true
     }
 }
+vim.keymap.set('n', '<space>n', function() vim.cmd('Neotree toggle') end)
 
 require('ibl').setup {
     indent = {
@@ -313,6 +356,39 @@ require('monokai-pro').setup {
 
 vim.cmd.colorscheme('monokai-pro')
 
+local get_trouble_mode = function()
+    local mode
+    local views = (require 'trouble.view').get { open = true }
+    for _, item in ipairs(views) do
+        if item.view and item.view.win.win == vim.api.nvim_get_current_win() then
+            mode = item.mode
+            break
+        end
+    end
+    return mode
+end
+
+local get_trouble_mode_formatted = function()
+    local words = {}
+    local mode = get_trouble_mode()
+    if mode then
+        words = vim.split(get_trouble_mode(), '[%W]')
+        for i, word in ipairs(words) do
+            words[i] = word:sub(1, 1):upper() .. word:sub(2)
+        end
+    end
+
+    return table.concat(words, ' ')
+end
+
+local get_filename = function()
+    return vim.fn.expand('%:~:.')
+end
+
+local get_working_directory = function()
+    return vim.fn.fnamemodify(vim.fn.getcwd(), ':~')
+end
+
 require('lualine').setup {
     options = {
         icons_enabled = true,
@@ -328,7 +404,7 @@ require('lualine').setup {
         },
     },
     sections = {
-        lualine_a = { { 'filename', separator = { left = '', right = '' }, right_padding = 2 } },
+        lualine_a = { { get_working_directory, separator = { left = '', right = '' }, right_padding = 2 } },
         lualine_b = { 'branch', 'diff' },
         lualine_c = { },
         lualine_x = { 'location', 'progress' },
@@ -336,10 +412,10 @@ require('lualine').setup {
         lualine_z = { { 'mode', separator = { left = '', right = '' }, right_padding = 2 } },
     },
     winbar = {
-        lualine_a = { { 'filename', separator = { left = '', right = '' }, right_padding = 2 } },
+        lualine_a = { { get_filename, separator = { left = '', right = '' }, right_padding = 2 } },
     },
     inactive_winbar = {
-        lualine_a = { { 'filename', separator = { left = '', right = '' }, right_padding = 2 } },
+        lualine_a = { { get_filename, separator = { left = '', right = '' }, right_padding = 2 } },
     },
     extensions = {
         {
@@ -352,9 +428,21 @@ require('lualine').setup {
                 },
                 lualine_x = { 'location', 'progress' },
             },
+        },
+        {
+            filetypes = { 'trouble' },
+            winbar = {
+                lualine_a = {
+                    { '', draw_empty = true, separator = { left = '' } }, -- do this so we can get the separator to the left but still get component separator after title
+                    function() return 'Trouble' end,
+                    get_trouble_mode_formatted,
+                },
+                lualine_x = { 'location', 'progress' },
+            },
         }
     },
 }
+
 
 -- vim.g.qf_auto_resize = 0
 -- vim.g.qf_loclist_window_bottom = 0
