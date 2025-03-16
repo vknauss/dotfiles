@@ -451,3 +451,7 @@ require('lualine').setup {
 
 -- vim.g.qf_auto_resize = 0
 -- vim.g.qf_loclist_window_bottom = 0
+--
+vim.filetype.add({
+    pattern = { [".*/hypr/.*%.conf"] = "hyprlang" }
+})
