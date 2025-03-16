@@ -320,7 +320,12 @@ require('neo-tree').setup {
     },
     filesystem = {
         -- find_by_full_path_words = true,
-        use_libuv_file_watcher = true
+        use_libuv_file_watcher = true,
+        window = {
+            mappings = {
+                ['/'] = 'noop' -- disable fuzzy finder
+            },
+        },
     }
 }
 vim.keymap.set('n', '<space>n', function() vim.cmd('Neotree toggle') end)

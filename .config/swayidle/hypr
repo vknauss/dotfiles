@@ -1,0 +1,3 @@
+timeout 900 "hyprctl dispatch dpms off" resume "hyprctl dispatch dpms on"
+timeout 1800 "systemctl suspend" resume "hyprctl dispatch dpms on"
+before-sleep "hyprctl dispatch dpms off" after-resume "hyprctl dispatch dpms on"
