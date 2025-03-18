@@ -1,0 +1,29 @@
+// vim:filetype=jsonc
+[
+    {
+        // "name": "hidpi",
+        "output": "DP-1",
+        "position": "bottom", // Waybar position (top|bottom|left|right)
+        // "height": 48,
+        // "spacing": 6, // Gaps between modules (6px)
+        // Choose the order of the modules
+        "modules-left": ["custom/lock", "idle_inhibitor", "sway/workspaces", "sway/mode"],
+        "modules-center": ["custom/gpumon", "cpu", "memory", "temperature"],
+        "modules-right": ["custom/weather", "pulseaudio", "network", "tray", "clock#date", "clock"],
+        "include": "$HOME/.config/waybar/modules"
+    },
+    {
+        "output": "DP-2",
+        // "layer": "top", // Waybar at top layer
+        "position": "bottom", // Waybar position (top|bottom|left|right)
+        // "passthrough": true,
+        // "height": 24, // Waybar height (to be removed for auto height)
+        // "width": 1280, // Waybar width
+        // "spacing": 4, // Gaps between modules (4px)
+        // Choose the order of the modules
+        "modules-left": ["custom/lock", "idle_inhibitor", "sway/workspaces", "sway/mode"],
+        "modules-center": [],
+        "modules-right": ["custom/gpumon", "custom/weather", "pulseaudio", "clock#date", "clock"],
+        "include": "$HOME/.config/waybar/modules"
+    }
+]
