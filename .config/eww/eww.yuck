@@ -1,0 +1,93 @@
+(defwindow custom-bar1
+  :monitor 0
+  :stacking "bottom"
+  :exclusive true
+  :geometry (geometry
+              :x "0px"
+              :y "0px"
+              :width "100%"
+              :height "5%"
+              :anchor "bottom center"
+              )
+  (custom-bar)
+  )
+
+(defpoll datetime
+  :interval "1s"
+  :initial ""
+  `date +'{"time":"%r","date":"%a, %b %d"}'`
+  )
+
+(defpoll gpumon
+  :interval "5s"
+  :initial ""
+  `echo $(~/scripts/gpumon-waybar.sh)`
+  )
+
+(defwidget custom-bar []
+  (centerbox :orientation "h"
+    :class "custom-bar"
+    (bar-widgets-left)
+    (bar-widgets-center)
+    (bar-widgets-right)
+    )
+  )
+
+(defwidget bar-widgets-left []
+  (box
+    :class "widgets-left"
+    :halign "start"
+    :spacing 10
+    :space-evenly false
+    (label :text "heyy lol")
+    )
+  )
+
+(defwidget bar-widgets-center []
+  (box
+    :class "widgets-center"
+    :halign "center"
+    :spacing 10
+    :space-evenly false
+    (gpu)
+    (cpu)
+    (memory)
+    (temperature)
+    )
+  )
+
+(defwidget bar-widgets-right []
+  (box
+    :class "widgets-right"
+    :halign "end"
+    :spacing 10
+    :space-evenly false
+    (systray)
+    (label :text "${datetime.date}")
+    (label :text "${datetime.time}")
+    )
+  )
+
+(defwidget gpu []
+  (box
+    (label :text "GPU: ${gpumon.text}")
+    )
+  )
+
+(defwidget cpu []
+  (box
+    (label :text "CPU: ${round(EWW_CPU.avg, 0)}% | ${round(jq(EWW_CPU.cores, '[.[] | .freq] | add') / arraylength(EWW_CPU.cores) * 0.001, 2)} GHz")
+    )
+  )
+
+(defwidget memory []
+  (box
+    (label :text "MEM: ${round(EWW_RAM.used_mem_perc, 0)}%")
+    )
+  )
+
+(defwidget temperature []
+  (box
+    (label :text "TEMP: ${round(EWW_TEMPS.K10TEMP_TCCD1, 0)}°C")
+    )
+  )

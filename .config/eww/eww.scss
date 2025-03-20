@@ -1,0 +1,23 @@
+* {
+  all: unset;
+  font-family: DejaVuSans, SymbolsNerdFont;
+  font-size: 16px;
+}
+
+.custom-bar {
+  background-color: rgba(34, 34, 34, 0.6);
+  color: rgba(192, 192, 192, 1.0);
+}
+
+.custom-bar > * {
+  padding: 14px 14px
+}
+
+.custom-bar .widgets-left {
+}
+
+.custom-bar .widgets-center {
+}
+
+.custom-bar .widgets-right {
+}
