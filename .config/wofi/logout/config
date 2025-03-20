@@ -1,0 +1,8 @@
+mode=dmenu
+prompt=
+colors=color
+allow_images=true
+allow_markup=true
+insensitive=true
+hide_search=true
+width=300

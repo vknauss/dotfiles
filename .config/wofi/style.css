@@ -1,0 +1,61 @@
+* {
+    outline-style: none;
+    outline-width: 0px;
+    outline-color: currentColor;
+    box-shadow: none;
+    border: 0px;
+    /*padding: 0px;*/
+    margin: 0px;
+    border-radius: 0px;
+}
+
+#window {
+    border-radius: 5px;
+    background-color: transparent;
+    font-family: DejaVuSans;
+    font-size: 18px;
+}
+
+#input {
+    padding: 10px;
+    font-size: 20px;
+	color: --wofi-color2;
+	background-color: rgba(--wofi-rgb-color3, 0.65);
+}
+
+#input:focus {
+	background-color: rgba(--wofi-rgb-color1, 0.75);
+}
+
+#selected {
+    border-radius: 5px;
+	background-color: rgba(--wofi-rgb-color1, 0.5);
+}
+
+#inner-box {
+    padding: 0px;
+    margin: 0px;
+}
+
+#entry {
+    padding: 5px 7px;
+	background-color: rgba(--wofi-rgb-color0, 0.0);
+    color: --wofi-color2;
+}
+
+#entry:hover {
+    border-radius: 5px;
+	background-color: rgba(--wofi-rgb-color1, 0.25);
+}
+
+#scroll {
+	background-color: rgba(--wofi-rgb-color0, 0.75); 
+}
+
+#text {
+	padding: 0px 10px;
+}
+
+#img {
+    padding: 15px 15px;
+}

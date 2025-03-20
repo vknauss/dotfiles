@@ -1,0 +1,10 @@
+colors=color
+prompt=
+mode=drun
+allow_images=true
+insensitive=true
+gtk_dark=true
+orientation=horizontal
+lines=1
+image_size=128
+width=1920px
