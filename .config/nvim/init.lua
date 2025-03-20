@@ -182,6 +182,9 @@ lspconfig.pylsp.setup {
 lspconfig.jsonls.setup {
     capabilities = capabilities,
 }
+lspconfig.rust_analyzer.setup {
+    capabilities = capabilities,
+}
 
 -- https://github.com/neovim/nvim-lspconfig
 -- Global mappings.

@@ -3,7 +3,7 @@
     /* font-family: DejaVuSans, DejaVuSansMNerdFont, monospace; */
     /* font-family: DejaVuSans, DejaVuSansMNerdFont; */
     font-family: DejaVuSans, SymbolsNerdFont;
-    font-size: 21px;
+    font-size: 16px;
 }
 
 widget * {
@@ -130,5 +130,8 @@ label:focus {
 
 #tray > .needs-attention {
     -gtk-icon-effect: highlight;
+}
+
+#tray menu {
 }
 
