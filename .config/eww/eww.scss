@@ -1,23 +1,42 @@
 * {
-  all: unset;
+  background-color: transparent;
   font-family: DejaVuSans, SymbolsNerdFont;
   font-size: 16px;
 }
 
-.custom-bar {
-  background-color: rgba(34, 34, 34, 0.6);
+.bar-area {
+  background-color: rgba(180, 120, 140, 0.8);
+  padding: 8px 22px ;
+  margin: 4px 6px;
+  border-radius: 18px;
+}
+
+.bar-widgets-left {
+}
+
+.bar-widgets-center {
+}
+
+.bar-widgets-right {
+}
+
+.bar-widgets > * {
+  background-image: none;
+  background-color: rgba(48, 34, 34, 1.0);
+  border: none;
+  border-radius: 16px;
+  text-shadow: none;
+  padding: 4px 12px;
   color: rgba(192, 192, 192, 1.0);
 }
 
-.custom-bar > * {
-  padding: 14px 14px
+menu {
+  background-color: rgba(34, 34, 34, 0.9);
+  color: rgba(192, 192, 192, 1.0);
 }
 
-.custom-bar .widgets-left {
-}
-
-.custom-bar .widgets-center {
-}
-
-.custom-bar .widgets-right {
+.bar-widgets > button {
+  padding: 4px;
+  box-shadow: black -5 4 3;
+  min-width: 24px;
 }

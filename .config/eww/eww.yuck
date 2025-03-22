@@ -1,4 +1,4 @@
-(defwindow custom-bar1
+(defwindow custom-bar
   :monitor 0
   :stacking "bottom"
   :exclusive true
@@ -6,10 +6,10 @@
               :x "0px"
               :y "0px"
               :width "100%"
-              :height "5%"
+              :height "0%"
               :anchor "bottom center"
               )
-  (custom-bar)
+  (bar-area)
   )
 
 (defpoll datetime
@@ -24,9 +24,19 @@
   `echo $(~/scripts/gpumon-waybar.sh)`
   )
 
-(defwidget custom-bar []
+(defpoll weather
+  :interval "30s"
+  `echo $(python ~/scripts/weather/weather.py)`
+  )
+
+(defpoll userinfo
+  :interval "1s"
+  `echo "$USER@$(uname -n)"`
+  )
+
+(defwidget bar-area []
   (centerbox :orientation "h"
-    :class "custom-bar"
+    :class "bar-area"
     (bar-widgets-left)
     (bar-widgets-center)
     (bar-widgets-right)
@@ -35,34 +45,36 @@
 
 (defwidget bar-widgets-left []
   (box
-    :class "widgets-left"
+    :class "bar-widgets-left bar-widgets"
     :halign "start"
-    :spacing 10
+    :spacing 20
     :space-evenly false
-    (label :text "heyy lol")
+    (label :text "${userinfo}")
+    (logout)
     )
   )
 
 (defwidget bar-widgets-center []
   (box
-    :class "widgets-center"
+    :class "bar-widgets-center bar-widgets"
     :halign "center"
-    :spacing 10
+    :spacing 20
     :space-evenly false
     (gpu)
     (cpu)
     (memory)
-    (temperature)
     )
   )
 
 (defwidget bar-widgets-right []
   (box
-    :class "widgets-right"
+    :class "bar-widgets-right bar-widgets"
     :halign "end"
-    :spacing 10
+    :spacing 20
     :space-evenly false
-    (systray)
+    (weather)
+    (volume)
+    (tray)
     (label :text "${datetime.date}")
     (label :text "${datetime.time}")
     )
@@ -76,7 +88,7 @@
 
 (defwidget cpu []
   (box
-    (label :text "CPU: ${round(EWW_CPU.avg, 0)}% | ${round(jq(EWW_CPU.cores, '[.[] | .freq] | add') / arraylength(EWW_CPU.cores) * 0.001, 2)} GHz")
+    (label :text "CPU: ${round(EWW_CPU.avg, 0)}% | ${round(jq(EWW_CPU.cores, '[.[] | .freq] | add') / arraylength(EWW_CPU.cores) * 0.001, 2)} GHz | ${round(EWW_TEMPS.K10TEMP_TCTL, 0)}°C")
     )
   )
 
@@ -86,8 +98,27 @@
     )
   )
 
-(defwidget temperature []
+(defwidget weather []
   (box
-    (label :text "TEMP: ${round(EWW_TEMPS.K10TEMP_TCCD1, 0)}°C")
+    (label :text "${weather.text}")
+    )
+  )
+
+(defwidget volume []
+  (box
+    (label :text "VOL")
+    )
+  )
+
+(defwidget tray []
+  (systray
+    :spacing 14
+    )
+  )
+
+(defwidget logout []
+  (button
+    :onclick "pidof wofi || ~/scripts/wofi-logout.sh"
+    (label :text "⏻")
     )
   )

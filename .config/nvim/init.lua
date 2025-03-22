@@ -38,6 +38,7 @@ Plug 'loctvl842/monokai-pro.nvim'
 Plug 'tpope/vim-fugitive'
 Plug 'folke/trouble.nvim'
 Plug 'p00f/clangd_extensions.nvim'
+Plug 'elkowar/yuck.vim'
 
 " neo-tree deps
 Plug 'nvim-lua/plenary.nvim'
