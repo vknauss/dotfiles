@@ -1,8 +1,9 @@
 mode=dmenu
 prompt=
-colors=color
+colors=logout/color
 allow_images=true
 allow_markup=true
 insensitive=true
 hide_search=true
 width=300
+stylesheet=logout/style.css

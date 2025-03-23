@@ -1,0 +1,32 @@
+{
+    "options": [
+        {
+            "text": "<tt>\udb80\udf3e</tt>  Lock",
+            "command": "loginctl lock-session"
+        },
+        {
+            "text": "<tt>\udb80\udf43</tt>  Logout",
+            "command": "loginctl terminate-user $USER"
+        },
+        {
+            "text": "<tt>\udb81\udc25</tt>  Shutdown",
+            "command": "systemctl poweroff"
+        },
+        {
+            "text": "<tt>\udb81\udf09</tt>  Restart",
+            "command": "systemctl reboot"
+        },
+        {
+            "text": "<tt>\udb81\udc93</tt>  Reboot to UEFI setup",
+            "command": "systemctl reboot --firmware-setup"
+        },
+        {
+            "text": "<tt>\udb80\udfe4</tt>  Suspend",
+            "command": "systemctl suspend"
+        },
+        {
+            "text": "<tt>\udb82\udd04</tt>  Hibernate",
+            "command": "systemctl hibernate"
+        }
+    ]
+}

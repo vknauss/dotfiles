@@ -1,0 +1,55 @@
+* {
+    outline-style: none;
+    outline-width: 0px;
+    outline-color: currentColor;
+    box-shadow: none;
+    border: 0px;
+    margin: 0px;
+    border-radius: 0px;
+}
+
+#window {
+    background-color: transparent;
+    font-family: DejaVu Sans, Symbols Nerd Font;
+    font-size: 22px;
+}
+
+#outer-box {
+    background-color: rgba(--wofi-rgb-color0, 0.8);
+    border-radius: 18px;
+    margin: 24px;
+    padding: 0px;
+}
+
+#input {
+    min-height: 0px;
+}
+
+#inner-box {
+    padding: 0px;
+    margin: 0px;
+}
+
+#entry {
+    border-radius: 12px;
+    margin: 6px;
+	background-color: rgba(--wofi-rgb-color3, 1.0);
+    color: rgba(--wofi-rgb-color2, 1.0);
+}
+
+#entry:selected {
+    border-radius: 12px;
+	background-color: rgba(--wofi-rgb-color1, 1.0);
+}
+
+#scroll {
+	background-color: transparent; 
+}
+
+#text {
+	padding: 0px 10px;
+}
+
+#img {
+    padding: 15px 15px;
+}
